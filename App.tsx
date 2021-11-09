@@ -1,8 +1,11 @@
-import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
-import { StyleSheet, Text, SafeAreaView, View, FlatList } from 'react-native';
+import {
+  StyleSheet, Text, SafeAreaView, View, FlatList, Image, StatusBar, Platform
+} from 'react-native';
 
-const url = 'https://raw.githubusercontent.com/RyanHemrick/star_wars_movie_app/master/movies.json'
+const baseUrl = 'https://raw.githubusercontent.com/RyanHemrick/star_wars_movie_app/master/'
+const movieSuffix = 'movies.json'
+const posterSuffix = 'public/images/'
 
 type Movie = {
   title: string,
@@ -18,16 +21,20 @@ export default function App() {
 
   useEffect(() => {
     (async() => {
-      const response = await fetch(url)
+      const response = await fetch(`${baseUrl}${movieSuffix}`)
       const data = await response.json()
-      console.log(data.movies)
       setMovies(data.movies)
     })()
   }, [])
 
-  const renderMovie = ({ item }: any) => (
+  const renderMovie = ({ item }: { item: Movie }) => (
     <View>
       <Text>{item.title}</Text>
+      <Text>{item.episode_number}</Text>
+      <Image
+        style={styles.poster}
+        source={{ uri: `${baseUrl}${posterSuffix}${item.poster}` }}
+      />
     </View>
   );
 
@@ -48,5 +55,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
+  poster: {
+    width: 100,
+    height: 100,
+  }
 });
