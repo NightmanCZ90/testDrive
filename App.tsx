@@ -19,6 +19,7 @@ type Movie = {
 export default function App() {
   const [movies, setMovies] = useState<Movie[]>([])
   const [isAscending, setIsAscending] = useState<boolean>(false)
+  const [error, setError] = useState<boolean>(false)
 
   const sortMovies = (movies: Movie[]) => {
     if (!isAscending) setMovies(movies.sort((a, b) => (a.title > b.title) ? 1 : -1))
@@ -28,9 +29,15 @@ export default function App() {
 
   useEffect(() => {
     (async() => {
-      const response = await fetch(`${baseUrl}${movieSuffix}`)
-      const data = await response.json()
-      sortMovies(data.movies)
+      try {
+        const response = await fetch(`${baseUrl}${movieSuffix}`)
+        const data = await response.json()
+        sortMovies(data.movies)
+        setError(false)
+      } catch (err) {
+        console.log(err)
+        setError(true)
+      }
     })()
   }, [])
 
@@ -48,6 +55,7 @@ export default function App() {
   return (
     <SafeAreaView  style={styles.container}>
       <Text style={styles.appTitle}>Star Wars Movies</Text>
+      <Text style={styles.errorMessage}>{error && 'Something went wrong'}</Text>
       <FlatList
         data={movies}
         renderItem={renderMovie}
@@ -75,6 +83,9 @@ const styles = StyleSheet.create({
     fontSize: 36,
     color: '#fff',
     paddingTop: 10,
+  },
+  errorMessage: {
+    color: 'yellow',
   },
   movie: {
     backgroundColor: '#D85336',
