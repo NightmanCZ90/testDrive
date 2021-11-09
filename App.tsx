@@ -28,9 +28,9 @@ export default function App() {
   }, [])
 
   const renderMovie = ({ item }: { item: Movie }) => (
-    <View>
-      <Text>{item.title}</Text>
-      <Text>{item.episode_number}</Text>
+    <View style={styles.movie}>
+      <Text style={styles.movieTitle}>{item.title}</Text>
+      <Text style={styles.movieEpisode}>Episode: {item.episode_number}</Text>
       <Image
         style={styles.poster}
         source={{ uri: `${baseUrl}${posterSuffix}${item.poster}` }}
@@ -40,6 +40,7 @@ export default function App() {
 
   return (
     <SafeAreaView  style={styles.container}>
+      <Text style={styles.appTitle}>Star Wars Movies</Text>
       <FlatList
         data={movies}
         renderItem={renderMovie}
@@ -52,13 +53,37 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#B42304',
     alignItems: 'center',
     justifyContent: 'center',
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
+  appTitle: {
+    fontSize: 36,
+    color: '#fff',
+    paddingTop: 10,
+  },
+  movie: {
+    backgroundColor: '#D85336',
+    borderRadius: 5,
+    display: 'flex',
+    alignItems: 'center',
+    marginTop: 5,
+    marginBottom: 5,
+    color: '#fff',
+    padding: 10,
+  },
+  movieTitle: {
+    // fontSize:
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  movieEpisode: {
+    color: '#fff',
+  },
   poster: {
     width: 100,
     height: 100,
+    marginTop: 20,
   }
 });
