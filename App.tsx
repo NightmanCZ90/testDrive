@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet, Text, SafeAreaView, View, FlatList, Image, StatusBar, Platform
+  StyleSheet, Text, SafeAreaView, View, FlatList, Image, StatusBar, Platform, TouchableOpacity
 } from 'react-native';
 
 const baseUrl = 'https://raw.githubusercontent.com/RyanHemrick/star_wars_movie_app/master/'
@@ -17,13 +17,20 @@ type Movie = {
 }
 
 export default function App() {
-  const [movies, setMovies] = React.useState<Movie[]>([])
+  const [movies, setMovies] = useState<Movie[]>([])
+  const [isAscending, setIsAscending] = useState<boolean>(false)
+
+  const sortMovies = (movies: Movie[]) => {
+    if (!isAscending) setMovies(movies.sort((a, b) => (a.title > b.title) ? 1 : -1))
+    if (isAscending) setMovies(movies.sort((a, b) => (a.title > b.title) ? -1 : 1))
+    setIsAscending(!isAscending)
+   }
 
   useEffect(() => {
     (async() => {
       const response = await fetch(`${baseUrl}${movieSuffix}`)
       const data = await response.json()
-      setMovies(data.movies)
+      sortMovies(data.movies)
     })()
   }, [])
 
@@ -46,6 +53,12 @@ export default function App() {
         renderItem={renderMovie}
         keyExtractor={(item) => item.episode_number}
       />
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => sortMovies(movies)}
+      >
+        <Text style={styles.buttonText}>Sort movies</Text>
+      </TouchableOpacity>
     </SafeAreaView >
   );
 }
@@ -84,5 +97,18 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     marginTop: 20,
-  }
+  },
+  button: {
+    marginTop: 15,
+    width: '100%',
+    height: 50,
+    backgroundColor: '#C59018',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    fontSize: 26,
+    color: '#fff',
+  },
 });
