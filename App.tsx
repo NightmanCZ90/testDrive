@@ -74,7 +74,6 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   movieTitle: {
-    // fontSize:
     fontWeight: 'bold',
     color: '#fff',
   },
