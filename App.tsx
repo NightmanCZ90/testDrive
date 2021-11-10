@@ -16,16 +16,21 @@ type Movie = {
   hero_image: string,
 }
 
+const sortMoviesByEpisodeNumber = (movies: Movie[]) => {
+  const sortedMovies = movies.sort((a, b) => (a.episode_number > b.episode_number) ? 1 : -1)
+  return sortedMovies
+}
+
 export default function App() {
   const [movies, setMovies] = useState<Movie[]>([])
   const [isAscending, setIsAscending] = useState<boolean>(false)
   const [error, setError] = useState<boolean>(false)
 
   const sortMovies = (movies: Movie[]) => {
-    if (!isAscending) setMovies(movies.sort((a, b) => (a.title > b.title) ? 1 : -1))
-    if (isAscending) setMovies(movies.sort((a, b) => (a.title > b.title) ? -1 : 1))
-    setIsAscending(!isAscending)
-   }
+    const sortedMovies = sortMoviesByEpisodeNumber(movies)
+    if (!isAscending) setMovies(sortedMovies)
+    if (isAscending) setMovies(sortedMovies.reverse())
+  }
 
   useEffect(() => {
     (async() => {
@@ -33,6 +38,7 @@ export default function App() {
         const response = await fetch(`${baseUrl}${movieSuffix}`)
         const data = await response.json()
         sortMovies(data.movies)
+        setIsAscending(!isAscending)
         setError(false)
       } catch (err) {
         console.log(err)
@@ -40,6 +46,11 @@ export default function App() {
       }
     })()
   }, [])
+
+  const handlePress = () => {
+    sortMovies(movies)
+    setIsAscending(!isAscending)
+  }
 
   const renderMovie = ({ item }: { item: Movie }) => (
     <View style={styles.movie}>
@@ -63,7 +74,7 @@ export default function App() {
       />
       <TouchableOpacity
         style={styles.button}
-        onPress={() => sortMovies(movies)}
+        onPress={handlePress}
       >
         <Text style={styles.buttonText}>Sort movies</Text>
       </TouchableOpacity>
